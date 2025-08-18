@@ -8,9 +8,9 @@ const nodemailer = require("nodemailer");
 // Configure nodemailer transporter
 // Ensure you have set up your environment variables for MAIL and MAIL_PASS
 let transporter = nodemailer.createTransport({
-  service: "gmail", 
+  service: "gmail",
   auth: {
-    user: process.env.MAIL, 
+    user: process.env.MAIL,
     pass: process.env.MAIL_PASS,
   },
 });
@@ -41,15 +41,23 @@ const userController = {
     }
   },
 
+  // Delete a user by ID
+  delete: async (req, res) => {
+    try {
+      const user = await User.findByPk(req.params.id);
+      if (user) {
+        await user.destroy();
+        res.status(200).json({ message: "User deleted successfully" });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting user", error });
+    }
+  },
   // Register a new user
   register: async (req, res) => {
     try {
-      if (!req.body.username || !req.body.email || !req.body.password) {
-        return res
-          .status(400)
-          .json({ message: "Username, email, and password are required" });
-      }
-      console.log("test");
       const existingUserWithEmail = await User.findOne({
         where: { email: req.body.email },
       });
@@ -75,7 +83,9 @@ const userController = {
         subject: "Welcome to DOMCHAT",
         text: `Hello ${newUser.username}, welcome to DOMCHAT!`,
         html: `<h1>Hello ${newUser.username}</h1>
-        <a href=${process.env.BASE_URL_SERVER + "/users/verify/" + token}>Verify your account!</a>`,
+        <a href=${
+          process.env.BASE_URL_SERVER + "/users/verify/" + token
+        }>Verify your account!</a>`,
       });
       res.status(201).json(newUser);
     } catch (error) {
@@ -104,6 +114,34 @@ const userController = {
       res.status(500).json({ message: "Error verifying user", error });
     }
   },
+
+  // Login user
+  login: async (req, res) => {
+    try {
+      const user = await User.findOne({ where: { email: req.body.email } });
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      const isPasswordValid = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid password" });
+      }
+      if (!user.verify) {
+        return res.status(403).json({ message: "Account not verified" });
+      }
+      const token = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+      res.status(200).json({ token, user });
+    } catch (error) {
+      res.status(500).json({ message: "Error logging in", error });
+    }
+  }
 };
 
 module.exports = userController;
