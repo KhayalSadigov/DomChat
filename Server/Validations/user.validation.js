@@ -1,4 +1,3 @@
-// User Valiodation Schema
 const Joi = require("joi");
 
 const userValidationSchema = Joi.object({
@@ -6,6 +5,7 @@ const userValidationSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
   verify: Joi.boolean().default(false),
+  contacts: Joi.array().items(Joi.number()) 
 });
 
 module.exports = userValidationSchema;

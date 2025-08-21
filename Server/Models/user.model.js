@@ -25,6 +25,11 @@ const User = sequelize.define("User", {
     defaultValue: false,
     allowNull: false,
   },
+  contacts: {
+    type: DataTypes.JSON,
+    defaultValue: [],
+    allowNull: false,
+  },
 });
 
 module.exports = User;

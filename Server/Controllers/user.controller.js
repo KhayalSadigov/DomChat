@@ -84,7 +84,7 @@ const userController = {
         text: `Hello ${newUser.username}, welcome to DOMCHAT!`,
         html: `<h1>Hello ${newUser.username}</h1>
         <a href=${
-          process.env.BASE_URL_SERVER + "/users/verify/" + token
+          process.env.BASE_URL_SERVER + "api/users/verify/" + token
         }>Verify your account!</a>`,
       });
       res.status(201).json(newUser);
