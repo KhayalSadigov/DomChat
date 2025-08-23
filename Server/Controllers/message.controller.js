@@ -23,6 +23,7 @@ const messageController = {
             res.status(500).json({ message: "Error fetching message", error });
         }
     },
+    // Delete a message by ID
     delete: async (req, res) => {
         try {
             const message = await Message.findByPk(req.params.id);

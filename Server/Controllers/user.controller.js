@@ -77,6 +77,7 @@ const userController = {
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
+      // Send verification email
       const info = await transporter.sendMail({
         from: process.env.MAIL,
         to: newUser.email,
@@ -101,6 +102,7 @@ const userController = {
       if (!token) {
         return res.status(400).json({ message: "Token is required" });
       }
+      // Verify token and extract user ID
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findByPk(decoded.id);
       if (!user) {

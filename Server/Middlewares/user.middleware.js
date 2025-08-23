@@ -1,16 +1,16 @@
 const userValidationSchema = require("../Validations/user.validation");
 
 const userMiddleware = {
+  // Validate using Joi schema
   register: (req, res, next) => {
-    // Validate using Joi schema
     const { error } = userValidationSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
     next();
   },
+  // Validate request body for login
   login: (req, res, next) => {
-    // Validate request body for login
     if (!req.body.email || !req.body.password) {
       return res
         .status(400)

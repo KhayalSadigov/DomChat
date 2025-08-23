@@ -2,6 +2,7 @@ const messageValidationSchema = require("../Validations/message.validation");
 const jwt = require("jsonwebtoken");
 
 const messageMiddleware = {
+  // Message validation middleware
   validateMessage: (req, res, next) => {
     const { error } = messageValidationSchema.validate(req.body);
     if (error) {
@@ -9,6 +10,7 @@ const messageMiddleware = {
     }
     next();
   },
+  // Token validation middleware
   validateToken: (req, res, next) => {
     if (!req.headers.authorization) {
       return res.status(401).json({ message: "Authorization token is required" });
@@ -21,7 +23,6 @@ const messageMiddleware = {
     if (!decode) {
       return res.status(401).json({ message: "Invalid token" });
     }
-    // Token validation logic can be added here
     next();
   }
 };
