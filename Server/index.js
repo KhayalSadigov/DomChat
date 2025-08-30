@@ -12,17 +12,19 @@ const port = process.env.PORT;
 
 // Body parser and cors middlewares
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Import/Use routes
 const userRoute = require("./Routes/user.route");
 const messageRoute = require("./Routes/message.route");
-const messageSocket = require("./Sockets/message.socket");
+const trickRoute = require("./Routes/trick.route");
+app.use(trickRoute);
 app.use(messageRoute);
 app.use(userRoute);
 
 // Socket.io setup
+const messageSocket = require("./Sockets/message.socket");
 const server = htpp.createServer(app);
 const io = new Server(server, {
   cors: {

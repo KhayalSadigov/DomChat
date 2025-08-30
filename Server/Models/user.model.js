@@ -8,6 +8,10 @@ const User = sequelize.define("User", {
     allowNull: false,
     primaryKey: true,
   },
+  profile: {
+    type: DataTypes.TEXT("long"),
+    allowNull: false,
+  },
   username: {
     type: DataTypes.STRING,
     allowNull: false,
